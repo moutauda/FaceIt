@@ -12,15 +12,50 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var faceView: FaceView!{
         didSet{
+            let handler = #selector(FaceView.changeScale(byReactingTo:))
+            let pinchRecogniser = UIPinchGestureRecognizer(target: faceView, action: handler)
+            faceView.addGestureRecognizer(pinchRecogniser)
+            let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(toggleEyes(byReactingTo:)))
+            tapRecogniser.numberOfTapsRequired = 1
+            faceView.addGestureRecognizer(tapRecogniser)
+            let swipeUpRecogniser = UISwipeGestureRecognizer(target: self, action: #selector(increaseHappiness))
+            swipeUpRecogniser.direction = .up
+            faceView.addGestureRecognizer(swipeUpRecogniser)
+            let swipeDownRecogniser = UISwipeGestureRecognizer(target: self, action: #selector(decreaseHappiness))
+            swipeDownRecogniser.direction = .down
+            faceView.addGestureRecognizer(swipeDownRecogniser)
             updateUI()
         }
     }
 
+    func toggleEyes(byReactingTo tapRecogniser: UITapGestureRecognizer){
+        if tapRecogniser.state == .ended{
+            let eyes: FacialExpression.Eyes = (expression.eyes == .close) ? .open : .close
+            expression = FacialExpression(eyes: eyes, mouth: expression.mouth)
+        }
+    }
+    
+    func increaseHappiness()
+    {
+        expression = expression.happier
+    }
+    
+    func decreaseHappiness()
+    {
+        expression = expression.sadder
+    }
+    
+    
     var expression = FacialExpression(eyes: .close, mouth: .grin){
         didSet {
             updateUI()
         }
     }
+    
+    
+    
+    
+    
     private func updateUI()
     {
         switch expression.eyes {
