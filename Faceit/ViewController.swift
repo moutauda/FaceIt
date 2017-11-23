@@ -21,7 +21,6 @@ class ViewController: UIViewController {
             updateUI()
         }
     }
-    c
     private func updateUI()
     {
         switch expression.eyes {
